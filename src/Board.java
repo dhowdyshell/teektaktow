@@ -1,7 +1,7 @@
 
 public class Board {
+	private static final String BLANK_TOKEN = "-";
 	private class Token {
-		private static final String BLANK_TOKEN = "-";
 		private String myName;
 		
 		public Token () {
@@ -21,15 +21,20 @@ public class Board {
 		}
 	}
 	
-	private static final int DEFAULT_SIZE = 3;	
+	private final int BOARD_SIZE;	
 	Token[][] myBoardLayout;
 	int numTokens;
 	
 	public Board() {
-		myBoardLayout = new Token[DEFAULT_SIZE][DEFAULT_SIZE];
+		this(3);
+	}
+	
+	public Board(int size) {
+		BOARD_SIZE = size;
+		myBoardLayout = new Token[BOARD_SIZE][BOARD_SIZE];
 		numTokens = 0;
-		for (int r = 0; r < DEFAULT_SIZE; r++ ) {
-			for (int c = 0; c < DEFAULT_SIZE; c++ ) {
+		for (int r = 0; r < BOARD_SIZE; r++ ) {
+			for (int c = 0; c < BOARD_SIZE; c++ ) {
 				myBoardLayout[r][c] = new Token();
 			}
 		}
@@ -37,7 +42,11 @@ public class Board {
 	
 	public boolean setPiece(int idx, String name) {
 		idx -= 1;
-		if( myBoardLayout[idx/DEFAULT_SIZE][idx%DEFAULT_SIZE].setName(name) ) {
+		return setPiece(idx/BOARD_SIZE + 1, idx%BOARD_SIZE + 1, name);
+	}
+	
+	public boolean setPiece(int row, int col, String name) {
+		if( myBoardLayout[--row][--col].setName(name) ) {
 			numTokens++;
 			return true;
 		}
@@ -46,11 +55,19 @@ public class Board {
 	
 	public String getPiece(int idx) {
 		idx--;
-		return myBoardLayout[idx/DEFAULT_SIZE][idx%DEFAULT_SIZE].getName();
+		return getPiece(idx/BOARD_SIZE + 1, idx%BOARD_SIZE +1);
 	}
 	
 	public String getPiece(int row, int col) {
 		return myBoardLayout[--row][--col].getName();
+	}
+	
+	public boolean isEmpty(int idx) {
+		return BLANK_TOKEN.equals(getPiece(idx));
+	}
+	
+	public boolean isEmpty(int row, int col) {
+		return BLANK_TOKEN.equals(getPiece(row, col));
 	}
 	
 	public void printBoard () {
@@ -64,11 +81,11 @@ public class Board {
 	}
 	
 	public int size () {
-		return DEFAULT_SIZE;
+		return BOARD_SIZE;
 	}
 	
 	public boolean isFull () {
-		return (numTokens == DEFAULT_SIZE * DEFAULT_SIZE);
+		return (numTokens == BOARD_SIZE * BOARD_SIZE);
 	}
 	
 }

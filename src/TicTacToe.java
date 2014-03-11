@@ -2,32 +2,27 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToe {
-	static Board myBoard;
-	static boolean gameOver;
-	boolean myMove;
-	String myTokenString;
-	String opponentTokenString;
+	private static final String player1TokenString = "O";
+	private static final String player2TokenString = "X";
+	Board myBoard;
+	boolean gameOver;
+	Player player1;
+	Player player2;
+	boolean player1Move;
 	Scanner consoleReader;
 
 	public TicTacToe() {
 		gameOver = false;
-		myBoard = new Board();
+		myBoard = new Board(3);
 		consoleReader = new Scanner(System.in);
+		player1 = new HumanPlayer(player1TokenString, consoleReader, myBoard);
+		player2 = new ComputerPlayer(player2TokenString, consoleReader, myBoard);
 		chooseFirstMove();
 		playGame();
 	}
 
 	private void chooseFirstMove() {
-		// Randomize fist move
-		myMove = (new Random()).nextBoolean();
-		// "O" always goes first
-		if (myMove) {
-			myTokenString = "O";
-			opponentTokenString = "X";
-		} else {
-			myTokenString = "X";
-			opponentTokenString = "O";
-		}
+		player1Move = (new Random()).nextBoolean();
 	}
 
 	private void playGame() {
@@ -45,59 +40,28 @@ public class TicTacToe {
 	}
 
 	private void nextMove() {
-		if (myMove) {
-			int input = 0;
-			for (;;) {
-				do {
-					while (!consoleReader.hasNextInt()) {
-						System.out
-								.println("Invalid input, integer value only.");
-						consoleReader.next();
-					}
-					input = consoleReader.nextInt();
-					if (input < 1 || input > myBoard.size() * myBoard.size()) {
-						System.out.println("Invalid input, out of range.");
-						input = 0;
-					}
-				} while (input == 0);
-				if (myBoard.setPiece(input, myTokenString)) {
-					break;
-				} else {
-					System.out.println("Invalid move. Try again.");
-				}
-			}
+		if(player1Move) {
+			player1.makeMove();
 		} else {
-			for(;;) {
-				int myChoice = computerMove();
-				if ( myBoard.setPiece(myChoice, opponentTokenString) ) {
-					break;
-				}
-			}
+			player2.makeMove();
 		}
-		myMove = !myMove;
-	}
-
-	private int computerMove() {
-//		int myChoice = (new Random()).nextInt(9)+1;
-//		System.out.println("chosen val "+ myChoice);
-//		return myChoice;
-	return 1;
+		player1Move = !player1Move;
 	}
 	
 	private boolean checkWinner() {
+		boolean frontDiagWin = myBoard.isEmpty(1, 1);
 		String frontDiagToken = myBoard.getPiece(1, 1);
+		boolean backDiagWin = myBoard.isEmpty(1, myBoard.size());
 		String backDiagToken = myBoard.getPiece(1, myBoard.size());
-		boolean frontDiagWin = validToken(frontDiagToken);
-		boolean backDiagWin = validToken(backDiagToken);
 		for (int i = 1; i <= myBoard.size(); i++) {
 			//check Diagonals
 			frontDiagWin = myBoard.getPiece(i, i).equals(frontDiagToken) ? frontDiagWin : false;
 			backDiagWin = myBoard.getPiece(i, myBoard.size()-(i-1)).equals(backDiagToken) ? backDiagWin : false;
 			//check Rows and Columns
+			boolean rowWin = myBoard.isEmpty(i, 1);
 			String startRowToken = myBoard.getPiece(i, 1);
+			boolean colWin = myBoard.isEmpty(1, i);
 			String startColToken = myBoard.getPiece(1, i);
-			boolean rowWin = validToken(startRowToken);
-			boolean colWin = validToken(startColToken);
 			for(int j = 1; j <= myBoard.size(); j++) {
 				rowWin = myBoard.getPiece(i, j).equals(startRowToken) ? rowWin : false;
 				colWin = myBoard.getPiece(j, i).equals(startColToken) ? colWin : false;
@@ -112,10 +76,6 @@ public class TicTacToe {
 			return true;
 		}
 		return false;
-	}
-	
-	private boolean validToken(String val) {
-		return !"-".equals(val) ? true : false;
 	}
 
 	public static void main(String args[]) {
