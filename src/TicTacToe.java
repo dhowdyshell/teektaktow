@@ -2,8 +2,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToe {
-	private static final String player1TokenString = "O";
-	private static final String player2TokenString = "X";
+	private static final char player1TokenString = 'O';
+	private static final char player2TokenString = 'X';
 	Board myBoard;
 	boolean gameOver;
 	Player player1;
@@ -13,7 +13,7 @@ public class TicTacToe {
 
 	public TicTacToe() {
 		gameOver = false;
-		myBoard = new Board(3);
+		myBoard = new Board();
 		consoleReader = new Scanner(System.in);
 		player1 = new HumanPlayer(player1TokenString, consoleReader, myBoard);
 		player2 = new ComputerPlayer(player2TokenString, consoleReader, myBoard);
@@ -30,49 +30,53 @@ public class TicTacToe {
 		while (!gameOver) {
 			nextMove();
 			myBoard.printBoard();
-			if ( checkWinner() ) {
-				gameOver = true;
-			} else if (myBoard.isFull()) {
-				gameOver = true;
-				System.out.println ("Game is a draw.");
-			}
+			gameOver = checkWinner();
 		}
 	}
 
 	private void nextMove() {
-		if(player1Move) {
+		if (player1Move) {
 			player1.makeMove();
 		} else {
 			player2.makeMove();
 		}
 		player1Move = !player1Move;
 	}
-	
+
 	private boolean checkWinner() {
-		boolean frontDiagWin = myBoard.isEmpty(1, 1);
-		String frontDiagToken = myBoard.getPiece(1, 1);
-		boolean backDiagWin = myBoard.isEmpty(1, myBoard.size());
-		String backDiagToken = myBoard.getPiece(1, myBoard.size());
-		for (int i = 1; i <= myBoard.size(); i++) {
-			//check Diagonals
-			frontDiagWin = myBoard.getPiece(i, i).equals(frontDiagToken) ? frontDiagWin : false;
-			backDiagWin = myBoard.getPiece(i, myBoard.size()-(i-1)).equals(backDiagToken) ? backDiagWin : false;
-			//check Rows and Columns
-			boolean rowWin = myBoard.isEmpty(i, 1);
-			String startRowToken = myBoard.getPiece(i, 1);
-			boolean colWin = myBoard.isEmpty(1, i);
-			String startColToken = myBoard.getPiece(1, i);
-			for(int j = 1; j <= myBoard.size(); j++) {
-				rowWin = myBoard.getPiece(i, j).equals(startRowToken) ? rowWin : false;
-				colWin = myBoard.getPiece(j, i).equals(startColToken) ? colWin : false;
+		// Oh, it's easier to just check the 8 possible rows? Yea... probably...
+		boolean frontDiagWin = !myBoard.isEmpty(0, 0);
+		char frontDiagToken = myBoard.getCell(0, 0);
+		boolean backDiagWin = !myBoard.isEmpty(0, Board.BOARD_SIZE - 1);
+		char backDiagToken = myBoard.getCell(0, Board.BOARD_SIZE - 1);
+		for (int i = 0; i < Board.BOARD_SIZE; i++) {
+			// check Diagonals
+			frontDiagWin = myBoard.getCell(i, i) == frontDiagToken ? frontDiagWin
+					: false;
+			backDiagWin = myBoard.getCell(i, (Board.BOARD_SIZE - 1) - i) == backDiagToken ? backDiagWin
+					: false;
+			// check Rows and Columns
+			boolean rowWin = !myBoard.isEmpty(i, 0);
+			char startRowToken = myBoard.getCell(i, 0);
+			boolean colWin = !myBoard.isEmpty(0, i);
+			char startColToken = myBoard.getCell(0, i);
+			for (int j = 0; j < Board.BOARD_SIZE; j++) {
+				rowWin = myBoard.getCell(i, j) == startRowToken ? rowWin
+						: false;
+				colWin = myBoard.getCell(j, i) == startColToken ? colWin
+						: false;
 			}
 			if (rowWin || colWin) {
-				System.out.println("\"" + (rowWin ? startRowToken : startColToken) + "\" wins the game!");
+				System.out.println("\""
+						+ (rowWin ? startRowToken : startColToken)
+						+ "\" wins the game!");
 				return true;
 			}
 		}
 		if (frontDiagWin || backDiagWin) {
-			System.out.println("\"" + (frontDiagWin ? frontDiagToken : backDiagToken) + "\" wins the game!");
+			System.out.println("\""
+					+ (frontDiagWin ? frontDiagToken : backDiagToken)
+					+ "\" wins the game!");
 			return true;
 		}
 		return false;

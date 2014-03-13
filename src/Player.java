@@ -4,10 +4,10 @@ import java.util.Scanner;
 public abstract class Player {
 	Scanner consoleReader;
 	Board myBoard;
-	String tokenString;
+	char token;
 	
-	public Player(String name, Scanner consoleReader, Board myBoard) {
-		tokenString = name;
+	public Player(char token, Scanner consoleReader, Board myBoard) {
+		this.token = token;
 		this.consoleReader = consoleReader;
 		this.myBoard = myBoard;
 	}

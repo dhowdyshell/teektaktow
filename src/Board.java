@@ -1,91 +1,59 @@
-
 public class Board {
-	private static final String BLANK_TOKEN = "-";
-	private class Token {
-		private String myName;
-		
-		public Token () {
-			this.myName = "-";
-		}
-		
-		public boolean setName(String val) {
-			if(BLANK_TOKEN.equals(getName())) {
-				myName = val;
-				return true;
-			}
-			return false;
-		}
-		
-		public String getName() {
-			return myName;
-		}
-	}
-	
-	private final int BOARD_SIZE;	
-	Token[][] myBoardLayout;
-	int numTokens;
-	
+
+	public static final char BLANK_TOKEN = '-';
+	public static final int BOARD_SIZE = 3;
+	private static char[][] myBoardLayout;
+
 	public Board() {
-		this(3);
+		myBoardLayout = new char[][] { {BLANK_TOKEN,BLANK_TOKEN,BLANK_TOKEN},
+				{BLANK_TOKEN,BLANK_TOKEN,BLANK_TOKEN},{BLANK_TOKEN,BLANK_TOKEN,BLANK_TOKEN}};
 	}
-	
-	public Board(int size) {
-		BOARD_SIZE = size;
-		myBoardLayout = new Token[BOARD_SIZE][BOARD_SIZE];
-		numTokens = 0;
-		for (int r = 0; r < BOARD_SIZE; r++ ) {
-			for (int c = 0; c < BOARD_SIZE; c++ ) {
-				myBoardLayout[r][c] = new Token();
-			}
-		}
+
+	public boolean setCell(int idx, char token) {
+		return setCell(idx / BOARD_SIZE, idx % BOARD_SIZE, token);
 	}
-	
-	public boolean setPiece(int idx, String name) {
-		idx -= 1;
-		return setPiece(idx/BOARD_SIZE + 1, idx%BOARD_SIZE + 1, name);
-	}
-	
-	public boolean setPiece(int row, int col, String name) {
-		if( myBoardLayout[--row][--col].setName(name) ) {
-			numTokens++;
+
+	public boolean setCell(int row, int col, char token) {
+		if (BLANK_TOKEN == myBoardLayout[row][col] ) {
+			myBoardLayout[row][col] = token;
 			return true;
 		}
 		return false;
 	}
-	
-	public String getPiece(int idx) {
+
+	public char getCell(int idx) {
 		idx--;
-		return getPiece(idx/BOARD_SIZE + 1, idx%BOARD_SIZE +1);
+		return getCell(idx / BOARD_SIZE + 1, idx % BOARD_SIZE + 1);
 	}
-	
-	public String getPiece(int row, int col) {
-		return myBoardLayout[--row][--col].getName();
+
+	public char getCell(int row, int col) {
+		return myBoardLayout[row][col];
 	}
-	
+
 	public boolean isEmpty(int idx) {
-		return BLANK_TOKEN.equals(getPiece(idx));
+		return (getCell(idx) == BLANK_TOKEN);
 	}
-	
+
 	public boolean isEmpty(int row, int col) {
-		return BLANK_TOKEN.equals(getPiece(row, col));
+		return (getCell(row, col) == BLANK_TOKEN);
 	}
-	
-	public void printBoard () {
-		for (Token[] row : myBoardLayout) {
-			for (Token i : row) {
-				System.out.print(i.getName());
+
+	public boolean isMyCell(int idx, String name) {
+		return name.equals(getCell(idx));
+	}
+
+	public boolean isMyCell(int row, int col, String name) {
+		return name.equals(getCell(row, col));
+	}
+
+	public void printBoard() {
+		for (char[] row : myBoardLayout) {
+			for (char i : row) {
+				System.out.print(i);
 			}
 			System.out.println();
 		}
 		System.out.println();
 	}
-	
-	public int size () {
-		return BOARD_SIZE;
-	}
-	
-	public boolean isFull () {
-		return (numTokens == BOARD_SIZE * BOARD_SIZE);
-	}
-	
+
 }

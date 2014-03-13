@@ -3,12 +3,12 @@ import java.util.Scanner;
 
 public class HumanPlayer extends Player{
 	
-	public HumanPlayer(String name, Scanner consoleReader, Board myBoard) {
-		super(name, consoleReader, myBoard);
+	public HumanPlayer(char token, Scanner consoleReader, Board myBoard) {
+		super(token, consoleReader, myBoard);
 	}
 	
 	public void makeMove() {
-		int input = 0;
+		int input = -1;
 		for (;;) {
 			do {
 				while (!consoleReader.hasNextInt()) {
@@ -17,12 +17,12 @@ public class HumanPlayer extends Player{
 					consoleReader.next();
 				}
 				input = consoleReader.nextInt();
-				if (input < 1 || input > myBoard.size() * myBoard.size()) {
+				if (input < 0 || input >= Board.BOARD_SIZE * Board.BOARD_SIZE) {
 					System.out.println("Invalid input, out of range.");
-					input = 0;
+					input = -1;
 				}
-			} while (input == 0);
-			if (myBoard.setPiece(input, this.tokenString)) {
+			} while (input == -1);
+			if (myBoard.setCell(input, this.token)) {
 				break;
 			} else {
 				System.out.println("Invalid move. Try again.");
